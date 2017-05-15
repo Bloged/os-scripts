@@ -1,0 +1,31 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+	key="$1"
+
+	case $key in
+		-d|--dir)
+		DIR="$2"
+		shift # past argument
+		;;
+		-p|--program)
+		PROG="$2"
+		shift # past argument
+		;;
+		-v|--version)
+		VERSION="$2"
+		shift # past argument
+		;;
+		*)
+			# unknown option
+		;;
+	esac
+	shift # past argument or value
+done
+
+echo "Installing ${VERSION} of ${PROG} in ${DIR}"
+INSTALLER="install-${PROG}"
+if hash $INSTALLER 2>/dev/null; then
+	$INSTALLER -d ${DIR} -v ${VERSION}
+else
+	echo "Installer for ${PROG} not found. Missing ${INSTALLER}"
+fi
