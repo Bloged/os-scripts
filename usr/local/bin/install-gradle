@@ -1,0 +1,57 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+        key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}${VERSION}"
+else
+        INSTALL_DIR="${DIR}/${VERSION}"
+fi
+echo "Installing gradle ${VERSION} into ${INSTALL_DIR}"
+
+#Create install directory
+mkdir -p ${DIR}
+if [ ! -d "${DIR}" ]; then
+        echo "${DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${DIR}
+
+echo "Download the file"
+wget -O gradle.zip https://services.gradle.org/distributions/gradle-${VERSION}-bin.zip
+
+echo "Extracting archive"
+unzip -qq gradle.zip
+
+echo "Renaming to correct naming schema"
+mv gradle-${VERSION} ${VERSION}
+
+echo "Installing gradle binary to /usr/local/sbin"
+update-alternatives --quiet --install "/usr/local/bin/gradle" "gradle" "${INSTALL_DIR}/bin/gradle" 1
+echo "Using ${VERSION} as the new version"
+update-alternatives --quiet --set "gradle" "${INSTALL_DIR}/bin/gradle"
+
+echo "Removing temporary archive"
+rm gradle.zip
+
+echo "Setting this as latest and greatest version."
+rm current
+ln -s ${VERSION} current 
