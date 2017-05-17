@@ -1,0 +1,53 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+        key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        BASE_DIR="${DIR}"
+else
+        BASE_DIR="${DIR}/"
+fi
+
+#Create install directory
+mkdir -p ${DIR}
+if [ ! -d "${DIR}" ]; then
+        echo "${DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${DIR}
+
+wget https://download.jetbrains.com/idea/ideaIU-${VERSION}.tar.gz -O ideaIU.tar.gz -q --show-progress
+
+tar -xvf ideaIU.tar.gz
+
+currentdir=`ls | grep idea-IU`
+outputdir="${currentdir/idea-IU-/${VERSION}_}"
+
+rm ideaIU.tar.gz
+
+mv $currentdir $outputdir
+
+cd $outputdir
+rm -rf jre
+ln -s /opt/oracle/java/jdk/1.8.0 jre
+
+update-alternatives --install "/usr/sbin/idea" "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh" 1
+update-alternatives --set "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh"
