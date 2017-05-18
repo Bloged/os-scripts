@@ -25,6 +25,13 @@ done
 echo "Installing ${VERSION} of ${PROG} in ${DIR}"
 INSTALLER="install-${PROG}"
 if hash $INSTALLER 2>/dev/null; then
+	CMD="${INSTALLER}"
+	if [ ! -z "${DIR}" ]; then
+		CMD="${CMD} -d ${DIR}"
+	fi
+	if [ ! -z "${VERSION}" ]; then
+		CMD="${CMD} -v ${VERSION}"
+	fi
 	$INSTALLER -d ${DIR} -v ${VERSION}
 else
 	echo "Installer for ${PROG} not found. Missing ${INSTALLER}"
