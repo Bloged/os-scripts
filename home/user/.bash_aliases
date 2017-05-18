@@ -84,7 +84,7 @@ minikube() {
     echo "Adding insecure repository:"
     echo "  - repository.falcon:8888"
     echo "  - nexus.stgfalcon.uk5.rpc.payucloud.net:8888"
-    command minikube "$@" --insecure-registry=repository.falcon:8888 --insecure-registry=nexus.stgfalcon.uk5.rpc.payucloud.net:8888
+    command minikube "$@" --insecure-registry=repository.falcon:8888 --insecure-registry=nexus.stgfalcon.uk5.rpc.payucloud.net:8888 && notify-send Minikube "Minikube has been started with insecure repositories:\n  - repository.falcon:8888\n  - nexus.stgfalcon.uk5.rpc.payucloud.net:8888"
   else
     command minikube "$@"
   fi
