@@ -162,10 +162,13 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-# Volume control
-bindsym XF86AudioRaiseVolume exec pactl -- set-sink-volume 0 +2%
-bindsym XF86AudioLowerVolume exec pactl -- set-sink-volume 0 -2%
-bindSym XF86AudioMute exec pactl set-sink-mute 0 toggle
+# Media controls
+bindsym XF86AudioRaiseVolume exec pactl --set-sink-volume 0 +2%
+bindsym XF86AudioLowerVolume exec pactl --set-sink-volume 0 -2%
+bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
 
 # start tray applications
 exec --no-startup-id nm-applet
