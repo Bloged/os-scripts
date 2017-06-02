@@ -21,6 +21,7 @@ alias mp='mvn package'
 alias mcc='mvn clean compile'
 alias mci='mvn clean install'
 alias mcp='mvn clean package'
+alias mct='mvn clean test'
 
 # Vagrant
 alias vdestroy='vagrant destroy -f'
