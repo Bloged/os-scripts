@@ -49,5 +49,5 @@ cd $outputdir
 rm -rf jre
 ln -s /opt/oracle/java/jdk/1.8.0 jre
 
-update-alternatives --install "/usr/sbin/idea" "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh" 1
+update-alternatives --install "/usr/local/bin/idea" "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh" 1
 update-alternatives --set "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh"
