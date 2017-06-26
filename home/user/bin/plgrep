@@ -1,0 +1,34 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+  key="$1"
+  case $key in
+    -d|--dir)
+      DIR="$2"
+      shift # past argument
+      ;;
+    -p|--pattern)
+      PATTERN="$2"
+      shift # past argument
+      ;;
+    *)
+      # unknown option
+      ;;
+  esac
+  shift # past argument or value
+done
+
+if [ -z "${PATTERN}" ]; then
+  echo "No pattern found; please specify with -p <pattern> or --pattern <pattern>."
+  exit
+fi
+
+if [ -z "${DIR}" ]; then
+  DIR="." 
+fi
+
+if hash parallel 2>/dev/null; then
+  echo "Searching for "${PATTERN}" in ${DIR}"
+  find ${DIR}  -type f -regex '.*\.txt' | parallel --will-cite --block 10M -j 4 grep -F ${PATTERN}
+else
+  echo "GNU parallel not found."
+fi
