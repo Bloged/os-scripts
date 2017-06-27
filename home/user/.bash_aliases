@@ -1,9 +1,10 @@
 # Hack / Convenience
+alias empty-trash='gvfs-trash --empty'
+alias ll='ls -alFh'
 alias show-kernels='dpkg -l | tail -n +6 | grep -E "linux-image-[0-9]{1}\.[0-9]\.[0-9]"'
 alias show-kernels-unused='show-kernels | grep -v $(uname -r)'
 alias network='sudo service network-manager restart'
-alias watch='watch '
-alias empty-trash='gvfs-trash --empty'
+alias watch='watch --color '
 
 # apt-get / apt-cache
 alias acs='apt-cache search'
