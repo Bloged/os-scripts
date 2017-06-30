@@ -1,0 +1,47 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+        key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+if [ -z "${VERSION}" ]; then
+        echo "No version given will try to use latest version"
+        VERSION=`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | cut -c2-`
+fi
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}${VERSION}"
+else
+        INSTALL_DIR="${DIR}/${VERSION}"
+fi
+echo "Installing minikube ${VERSION} into ${INSTALL_DIR}"
+
+#Create version directory
+mkdir -p ${INSTALL_DIR}
+if [ ! -d "${INSTALL_DIR}" ]; then
+        echo "${INSTALL_DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${INSTALL_DIR}
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v${VERSION}/minikube-linux-amd64 
+chmod +x minikube
+
+update-alternatives --install "/usr/local/bin/minikube" "minikube" "/opt/kubernetes/minikube/${VERSION}/minikube" 1
+update-alternatives --set "minikube" "/opt/kubernetes/minikube/${VERSION}/minikube"
