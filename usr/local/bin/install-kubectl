@@ -30,7 +30,7 @@ if [ "${str:$i:1}" == "/" ]; then
 else
         INSTALL_DIR="${DIR}/${VERSION}"
 fi
-echo "Installing calibre ${VERSION} into ${INSTALL_DIR}"
+echo "Installing kubectl ${VERSION} into ${INSTALL_DIR}"
 
 #Create version directory
 mkdir -p ${INSTALL_DIR}
@@ -45,3 +45,6 @@ chmod +x kubectl
 
 update-alternatives --install "/usr/local/bin/kubectl" "kubectl" "${INSTALL_DIR}/kubectl" 1
 update-alternatives --set "kubectl" "${INSTALL_DIR}/kubectl"
+
+echo "Install autocompletion for kubectl."
+kubectl completion bash > /etc/bash_completion.d/kubectl
