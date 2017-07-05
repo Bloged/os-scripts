@@ -1,0 +1,52 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+        key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+if [ -z "${VERSION}" ]; then
+        echo "No version given. Use -v to specify version."
+	exit
+fi
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}${VERSION}"
+else
+        INSTALL_DIR="${DIR}/${VERSION}"
+fi
+echo "Installing franz ${VERSION} into ${INSTALL_DIR}"
+
+#Create version directory
+mkdir -p ${INSTALL_DIR}
+if [ ! -d "${INSTALL_DIR}" ]; then
+        echo "${INSTALL_DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${INSTALL_DIR}
+
+echo "Retrieving file..."
+wget -O franz.tgz https://github.com/meetfranz/franz-app/releases/download/${VERSION}/Franz-linux-x64-${VERSION}.tgz
+
+echo "Extracting file"
+tar -xf franz.tgz
+
+update-alternatives --install "/usr/local/bin/franz" "franz" "${INSTALL_DIR}/Franz" 1
+update-alternatives --set "franz" "${INSTALL_DIR}/Franz"
+
+rm franz.tgz
