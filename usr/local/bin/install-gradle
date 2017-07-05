@@ -18,40 +18,36 @@ while [[ $# -gt 1 ]]; do
         shift # past argument or value
 done
 
+if [ -z "${VERSION}" ]; then
+        echo "No version given. Use -v to specify version."
+	exit
+fi
+
 str=${DIR}
 i=$((${#str}-1))
 if [ "${str:$i:1}" == "/" ]; then
-        INSTALL_DIR="${DIR}${VERSION}"
+        INSTALL_DIR="${DIR}"
 else
-        INSTALL_DIR="${DIR}/${VERSION}"
+        INSTALL_DIR="${DIR}/"
 fi
-echo "Installing gradle ${VERSION} into ${INSTALL_DIR}"
+echo "Installing franz ${VERSION} into ${INSTALL_DIR}/${VERSION}"
 
-#Create install directory
-mkdir -p ${DIR}
-if [ ! -d "${DIR}" ]; then
-        echo "${DIR} could not be created. Do we have permissions?"
+#Create version directory
+mkdir -p ${INSTALL_DIR}
+if [ ! -d "${INSTALL_DIR}" ]; then
+        echo "${INSTALL_DIR} could not be created. Do we have permissions?"
         exit
 fi
-cd ${DIR}
+cd ${INSTALL_DIR}
 
-echo "Download the file"
+echo "Retrieving file..."
 wget -O gradle.zip https://services.gradle.org/distributions/gradle-${VERSION}-bin.zip
 
-echo "Extracting archive"
-unzip -qq gradle.zip
-
-echo "Renaming to correct naming schema"
+echo "Extracting file"
+unzip gradle.zip
 mv gradle-${VERSION} ${VERSION}
 
-echo "Installing gradle binary to /usr/local/sbin"
-update-alternatives --quiet --install "/usr/local/bin/gradle" "gradle" "${INSTALL_DIR}/bin/gradle" 1
-echo "Using ${VERSION} as the new version"
-update-alternatives --quiet --set "gradle" "${INSTALL_DIR}/bin/gradle"
+update-alternatives --install "/usr/local/bin/gradle" "gradle" "${INSTALL_DIR}/${VERSION}/bin/gradle" 1
+update-alternatives --set "gradle" "${INSTALL_DIR}/${VERSION}/bin/gradle"
 
-echo "Removing temporary archive"
 rm gradle.zip
-
-echo "Setting this as latest and greatest version."
-rm current
-ln -s ${VERSION} current 
