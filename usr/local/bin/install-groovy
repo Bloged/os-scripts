@@ -1,0 +1,52 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+       key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+if [ -z "${VERSION}" ]; then
+        echo "No version given. Use -v to specify version."
+	exit
+fi
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}${VERSION}"
+else
+        INSTALL_DIR="${DIR}/${VERSION}"
+fi
+echo "Installing groovy ${VERSION} into ${INSTALL_DIR}"
+
+#Create version directory
+mkdir -p ${DIR}
+if [ ! -d "${DIR}" ]; then
+        echo "${DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${DIR}
+
+sudo wget -O groovy.zip https://dl.bintray.com/groovy/maven/apache-groovy-binary-${VERSION}.zip
+
+sudo unzip groovy.zip
+
+sudo mv groovy-${VERSION} ${VERSION}
+
+update-alternatives --install "/usr/local/bin/groovy" "groovy" "${INSTALL_DIR}/groovy" 1
+update-alternatives --set "groovy" "${INSTALL_DIR}/groovy"
+
+rm groovy.zip
