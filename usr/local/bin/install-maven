@@ -1,0 +1,52 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+       key="$1"
+
+        case $key in
+                -d|--dir)
+                DIR="$2"
+                shift # past argument
+                ;;
+                -v|--version)
+                VERSION="$2"
+                shift # past argument
+                ;;
+                *)
+                        # unknown option
+                ;;
+        esac
+        shift # past argument or value
+done
+
+if [ -z "${VERSION}" ]; then
+        echo "No version given. Use -v to specify version."
+	exit
+fi
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}${VERSION}"
+else
+        INSTALL_DIR="${DIR}/${VERSION}"
+fi
+echo "Installing groovy ${VERSION} into ${INSTALL_DIR}"
+
+#Create version directory
+mkdir -p ${DIR}
+if [ ! -d "${DIR}" ]; then
+        echo "${DIR} could not be created. Do we have permissions?"
+        exit
+fi
+cd ${DIR}
+
+sudo wget -O maven.tar.gz http://www-eu.apache.org/dist/maven/maven-3/${VERSION}/binaries/apache-maven-${VERSION}-bin.tar.gz
+
+sudo tar -xvf maven.tar.gz
+
+sudo mv apache-maven-${VERSION} ${VERSION}
+
+update-alternatives --install "/usr/local/bin/mvn" "maven" "${INSTALL_DIR}/bin/mvn" 1
+update-alternatives --set "maven" "${INSTALL_DIR}/bin/mvn"
+
+rm maven.tar.gz
