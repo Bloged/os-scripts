@@ -47,7 +47,7 @@ mv $currentdir $outputdir
 
 cd $outputdir
 rm -rf jre
-ln -s /opt/oracle/java/jdk/1.8.0 jre
+ln -s /opt/oracle/java/jdk/1.8.0 jre64
 
 update-alternatives --install "/usr/local/bin/idea" "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh" 1
 update-alternatives --set "intellij" "${BASE_DIR}${outputdir}/bin/idea.sh"
