@@ -1,4 +1,16 @@
 #!/bin/bash
+ACTION="INSTALL"
+
+#Single command line params like -l
+if [ $# -eq 1 ]; then
+	case $1 in
+		-l|--list)
+		ACTION="LIST"
+		;;
+	esac
+fi
+
+# Key/Pair command line options
 while [[ $# -gt 1 ]]; do
 	key="$1"
 
@@ -22,17 +34,25 @@ while [[ $# -gt 1 ]]; do
 	shift # past argument or value
 done
 
-echo "Installing ${VERSION} of ${PROG} in ${DIR}"
-INSTALLER="install-${PROG}"
-if hash $INSTALLER 2>/dev/null; then
-	CMD="${INSTALLER}"
-	if [ ! -z "${DIR}" ]; then
-		CMD="${CMD} -d ${DIR}"
-	fi
-	if [ ! -z "${VERSION}" ]; then
-		CMD="${CMD} -v ${VERSION}"
-	fi
-	$INSTALLER -d ${DIR} -v ${VERSION}
+if [ "${ACTION}" == "LIST" ]; then
+	echo "Listing all possible programs available to install:"
+	compgen -c | grep install- | grep -v install-tool | sed --expression='s/install-//g'
+
+	exit 1
 else
-	echo "Installer for ${PROG} not found. Missing ${INSTALLER}"
+	echo "Installing ${VERSION} of ${PROG} in ${DIR}"
+	INSTALLER="install-${PROG}"
+	if hash $INSTALLER 2>/dev/null; then
+		CMD="${INSTALLER}"
+		if [ ! -z "${DIR}" ]; then
+			CMD="${CMD} -d ${DIR}"
+		fi
+		if [ ! -z "${VERSION}" ]; then
+			CMD="${CMD} -v ${VERSION}"
+		fi
+		$INSTALLER -d ${DIR} -v ${VERSION}
+	else
+		echo "Installer for ${PROG} not found. Missing ${INSTALLER}"
+	fi
+
 fi
