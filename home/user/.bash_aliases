@@ -1,4 +1,5 @@
 # Hack / Convenience
+alias _='sudo'
 alias empty-trash='gvfs-trash --empty'
 alias ll='ls -alFh'
 alias show-kernels='dpkg -l | tail -n +6 | grep -E "linux-image-[0-9]{1}\.[0-9]\.[0-9]"'
@@ -16,7 +17,7 @@ alias agus='agu | grep upgradable 1>/dev/null 2>/dev/null && UPGRADABLE=$(apt li
 
 # Maven
 #alias mvn='mvn -T 1C'
-alias mc='mvn compile'
+#alias mc='mvn compile'
 alias mcl='mvn clean'
 alias mi='mvn install'
 alias mp='mvn package'

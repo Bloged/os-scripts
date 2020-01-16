@@ -1,3 +1,6 @@
+[user]
+	name = Arjan Gelderblom
+	email = a.gelderblom@first8.nl
 [alias]
 	pretty-log = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	last = log -1 HEAD
