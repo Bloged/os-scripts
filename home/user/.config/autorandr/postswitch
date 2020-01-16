@@ -1,0 +1,3 @@
+#!/bin/sh
+nitrogen --restore; sleep 1; compton -b
+notify-send "Desktop" "Wallpaper restored"
