@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+devices=$(clewarecontrol -l | grep Device: | wc -l)
+
+if ! [[ $# -gt 1 ]]; then
+  echo "No process id given."
+  exit
+fi
+
+re='^[0-9]+$'
+if [[ $1 =~ $re ]] ; then
+  pid="${1}"
+  shift
+fi
+
+# Key/Pair command line options
+while [[ $# -gt 1 ]]; do
+	key="$1"
+
+	case $key in
+		-p|--pid)
+		pid="$2"
+		shift # past argument
+		;;
+		-n|--name)
+		pid=$(pidof "$2")
+		shift # past argument
+		;;
+		*)
+			# unknown option
+		;;
+	esac
+	shift # past argument or value
+done
+
+echo "Found ${devices} devices"
+if ((${devices} > 0)); then
+  serial=$(clewarecontrol -l | grep Device: | awk '{print $10}')
+  clewarecontrol -d ${serial} -as 1 0 > /dev/null
+  clewarecontrol -d ${serial} -as 2 0 > /dev/null
+  clewarecontrol -d ${serial} -as 0 1 > /dev/null
+  tail --pid ${pid} -f /dev/null
+  clewarecontrol -d ${serial} -as 0 0 > /dev/null
+  clewarecontrol -d ${serial} -as 1 0 > /dev/null
+  clewarecontrol -d ${serial} -as 2 1 > /dev/null
+else
+  echo "No cleware traffic light found... do nothing"
+fi
