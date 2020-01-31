@@ -1,6 +1,8 @@
 [user]
 	name = Arjan Gelderblom
-	email = a.gelderblom@first8.nl
+	email = git@gelderblom-hanekamp.nl
 [alias]
 	pretty-log = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	last = log -1 HEAD
+[includeIf "gitdir:~/repo/work"]
+	path = ~/.config/git/.gitconfig-first8

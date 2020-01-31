@@ -26,6 +26,9 @@ alias mci='mvn clean install'
 alias mcp='mvn clean package'
 alias mct='mvn clean test'
 
+# MPV
+alias mpv-playlist='mpv --ytdl-raw-options="yes-playlist="'
+
 # Vagrant
 alias vdestroy='vagrant destroy -f'
 alias vhalt='vagrant halt'
