@@ -1,0 +1,52 @@
+#!/bin/bash
+while [[ $# -gt 1 ]]; do
+	key="$1"
+
+	case $key in
+		-d|--dir)
+		DIR="$2"
+		shift # past argument
+		;;
+		-v|--version)
+		VERSION="$2"
+		shift # past argument
+		;;
+		*)
+			# unknown option
+		;;
+	esac
+	shift # past argument or value
+done
+
+str=${DIR}
+i=$((${#str}-1))
+if [ "${str:$i:1}" == "/" ]; then
+        INSTALL_DIR="${DIR}"
+else
+        INSTALL_DIR="${DIR}/"
+fi
+echo "Installing yt-dlp ${VERSION} into ${INSTALL_DIR}"
+
+#Create version directory
+mkdir -p ${INSTALL_DIR}
+if [ ! -d "${INSTALL_DIR}" ]; then
+	echo "${INSTALL_DIR} could not be created. Do we have permissions?"
+	exit
+fi
+cd ${INSTALL_DIR}
+
+#Get the file
+wget -O yt-dlp.tar.gz https://github.com/yt-dlp/yt-dlp/releases/download/${VERSION}/yt-dlp.tar.gz
+
+#Extract
+tar -xvf yt-dlp.tar.gz
+
+#Rename correctly
+mv yt-dlp ${VERSION}
+
+#Install youtube-dl binary
+update-alternatives --install "/usr/local/bin/yt-dlp" "yt-dlp" "${INSTALL_DIR}/${VERSION}/yt-dlp" 1
+update-alternatives --set "yt-dlp" "${INSTALL_DIR}/${VERSION}/yt-dlp"
+
+#Remove the install file
+rm yt-dlp.tar.gz

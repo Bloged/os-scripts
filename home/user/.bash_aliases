@@ -1,11 +1,16 @@
 # Hack / Convenience
 alias _='sudo'
-alias empty-trash='gvfs-trash --empty'
+#alias empty-trash='gvfs-trash --empty'
 alias ll='ls -alFh'
-alias show-kernels='dpkg -l | tail -n +6 | grep -E "linux-image-[0-9]{1}\.[0-9]\.[0-9]"'
+alias show-kernels='dpkg -l | tail -n +6 | grep -E "linux-image-[0-9]{1}\.[0-9]{1,2}\.[0-9]{1,2}-[0-9]{1,2}-[0-9a-zA-Z]+m"'
 alias show-kernels-unused='show-kernels | grep -v $(uname -r)'
 alias network='sudo service network-manager restart'
 alias watch='watch --color '
+alias mp3dir='total_seconds=$(( $(mp3info -p "%S + " *.mp3) 0 )); printf "Duration: %02d:%02d:%02d\n" $((total_seconds / 3600)) $((((total_seconds % 3600)+(total_seconds % 60))/60)) $((total_seconds % 60)); unset total_seconds'
+alias ddrescue='ddrescue-wrapper'
+
+# Modern Unix (https://github.com/ibraheemdev/modern-unix)
+alias cat='bat' # https://github.com/sharkdp/bat
 
 # apt-get / apt-cache
 alias acs='apt-cache search'
@@ -29,6 +34,24 @@ alias mct='mvn clean test'
 # MPV
 alias mpv-playlist='mpv --ytdl-raw-options="yes-playlist="'
 
+#nmcli
+wifi() {
+  command nmcli radio wifi $@
+}
+
+#noisetorch
+noisetorch-supress() {
+  #echo "Searching for source $@"
+  #echo "Command: noisetorch -l | grep -a1 $@ | grep \"Device ID\" | cut -d':' -f2"
+  device=$(noisetorch -l | sed '/Sinks/q' | awk '/Monitor/{getline;next} 1' | grep -a1 $@ | grep "Device ID" | cut -d':' -f2 | xargs)
+  if [ ! -z "${device}" ]; then
+    echo "Found device ID: \"${device}\""
+    command noisetorch -i ${device}
+  else
+    echo "No device with name '$@' found"
+  fi
+}
+
 # Vagrant
 alias vdestroy='vagrant destroy -f'
 alias vhalt='vagrant halt'
@@ -36,6 +59,16 @@ alias vprovision='vagrant provision'
 alias vssh='vagrant ssh'
 alias vup='vagrant up'
 alias vupdate='vagrant box update'
+
+#Traffic light
+alias tlgreen="sudo clewarecontrol -as 0 0 > /dev/null; sudo clewarecontrol -as 1 0 > /dev/null; sudo clewarecontrol -as 2 1 > /dev/null"
+alias tloff="sudo clewarecontrol -as 0 0 > /dev/null; sudo clewarecontrol -as 1 0 > /dev/null; sudo clewarecontrol -as 2 0 > /dev/null"
+alias tlorange="sudo clewarecontrol -as 0 0 > /dev/null; sudo clewarecontrol -as 1 1 > /dev/null; sudo clewarecontrol -as 2 0 > /dev/null"
+alias tlred="sudo clewarecontrol -as 0 1 > /dev/null; sudo clewarecontrol -as 1 0 > /dev/null; sudo clewarecontrol -as 2 0 > /dev/null"
+alias tlcycle="tlred; sleep 5; tlorange; sleep 5; tlgreen; sleep 5; tloff"
+
+# youtube-dl
+alias youtube-dl-audio='youtube-dl --ignore-errors --output "%(title)s.%(ext)s" --extract-audio --audio-format mp3'
 
 # Docker
 docker() {
@@ -86,14 +119,5 @@ kubectl() {
 
 # Minikube
 alias minikube-env='eval $(minikube docker-env)'
-minikube() {
-  if [[ $@ == *"start"* ]]; then
-    echo "Adding insecure repository:"
-    echo "  - repository.falcon:8888"
-    echo "  - nexus.stgfalcon.uk5.rpc.payucloud.net:8888"
-    command minikube "$@" --insecure-registry=repository.falcon:8888 --insecure-registry=nexus.stgfalcon.uk5.rpc.payucloud.net:8888 && notify-send Minikube "Minikube has been started with insecure repositories:\n  - repository.falcon:8888\n  - nexus.stgfalcon.uk5.rpc.payucloud.net:8888"
-  else
-    command minikube "$@"
-  fi
-}
 
+alias docking-station='xrandr --setprovideroutputsource 1 0;xrandr --setprovideroutputsource 2 0;xrandr --setprovideroutputsource 3 0;xrandr --setprovideroutputsource 4 0; autorandr --change'

@@ -2,7 +2,7 @@
 
 devices=$(clewarecontrol -l | grep Device: | wc -l)
 
-if ! [[ $# -gt 1 ]]; then
+if ! [[ $# -eq 1 ]]; then
   echo "No process id given."
   exit
 fi
