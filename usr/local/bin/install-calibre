@@ -3,6 +3,10 @@ while [[ $# -gt 1 ]]; do
 	key="$1"
 
 	case $key in
+		-b|--binary)
+		BINARY="$2"
+		shift # past argument
+		;;
 		-d|--dir)
 		DIR="$2"
 		shift # past argument
@@ -35,11 +39,18 @@ if [ ! -d "${INSTALL_DIR}" ]; then
 fi
 cd ${INSTALL_DIR}
 
-#Get the file
-wget -O calibre.txz http://download.calibre-ebook.com/${VERSION}/calibre-${VERSION}-x86_64.txz
+if [ -z "$BINARY" ]; then
+	#Get the file
+	echo "No binary found... downloading file."
+	wget -O calibre.txz http://download.calibre-ebook.com/${VERSION}/calibre-${VERSION}-x86_64.txz
+else
+	#Copy file to the expected filename + location
+	echo "Binary ($BINARY) found using this one."
+	cp $BINARY calibre.txz
+fi
 
 #Extract
-tar -xvf calibre.txz
+tar -xf calibre.txz
 
 #Install calibre binary
 update-alternatives --install "/usr/bin/calibre" "calibre" "${INSTALL_DIR}/calibre" 1
